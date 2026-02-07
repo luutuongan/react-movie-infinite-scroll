@@ -6,7 +6,8 @@ $row-hover: #1f2937; // Gray-800
 .container {
   padding: 2rem;
   background-color: $bg-dark;
-  min-height: 100vh;
+  max-width: 1000px;
+  margin: 0 auto;
   color: white;
 
   .header {
@@ -26,63 +27,36 @@ $row-hover: #1f2937; // Gray-800
   }
 }
 
-.tableWrapper {
-  overflow-x: auto;
-  border-radius: 0.75rem;
+.tableContainer {
+  height: 600px;
+  overflow-x: auto; // Cho phép cuộn ngang nếu màn hình quá nhỏ
+  overflow-y: auto; // Cuộn dọc bên trong bảng
   border: 1px solid #374151;
   background-color: #1f2937;
 
   table {
     width: 100%;
-    text-align: left;
+    // CHIẾC KHÓA Ở ĐÂY:
+    table-layout: fixed; // Ép các cột tuân thủ độ rộng mình đặt ra
     border-collapse: collapse;
 
-    thead {
-      background-color: #374151;
-      color: #d1d5db;
-      text-transform: uppercase;
-      font-size: 0.75rem;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-
-      th {
-        padding: 1rem 1.5rem;
-      }
+    thead th, tbody td {
+      // Đảm bảo nội dung không bị tràn ra ngoài
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis; // Hiện dấu "..." nếu chữ quá dài
+      padding: 12px 16px;
     }
 
-    tbody {
-      tr {
-        border-bottom: 1px solid #374151;
-        transition: all 0.3s;
-
-        &:hover {
-          background-color: rgba(31, 41, 55, 0.5);
-          
-          .movieTitle {
-            color: $primary-color;
-          }
-        }
-
-        td {
-          padding: 1rem 1.5rem;
-        }
-      }
-    }
+    // Thiết lập độ rộng cụ thể cho từng cột
+    .colPoster { width: 80px; text-align: center; }
+    .colTitle  { width: 400px; } // Cột tên phim cần rộng nhất
+    .colDate   { width: 150px; text-align: center; }
+    .colRating { width: 100px; text-align: center; }
   }
 }
 
-.posterImg {
-  width: 60px;
-  border-radius: 4px;
-  transition: transform 0.3s;
-}
-
-.loadingArea {
-  padding: 2.5rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: $primary-color;
+.sentinel {
+  height: 20px;            // Phần tử mồi nằm cuối bảng
+  width: 100%;
 }

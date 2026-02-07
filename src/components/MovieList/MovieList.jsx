@@ -55,59 +55,63 @@ const MovieListTable = () => {
     }
   }, [page]);
 
-  const lastRowRef = useInfiniteScroll(loading, hasMore, () => {
-    // Chỉ tăng page nếu không đang trong quá trình fetch
-    if (!isFetching.current && hasMore) {
-      setPage(prev => prev + 1);
-    }
-  });
+  // Truyền thêm 'root' là cái container của bảng
+  const tableContainerRef = useRef(null);
+  
+  const lastRowRef = useInfiniteScroll(
+    loading,
+    hasMore,
+    () => {
+      if (!isFetching.current && hasMore) {
+        setPage(prev => prev + 1);
+      }
+    },
+    tableContainerRef.current // Truyền container làm vùng quan sát
+  );
 
   return (
     <div className={styles.container}>
       <header className={styles.header}>
         <h1><Film /> Movie Explorer</h1>
-        <span>Trang: {page}</span>
+        <span>Tổng số trang: {page}</span>
       </header>
-
-      <div className={styles.tableWrapper}>
+      
+      {/* Vùng bao quanh có thanh cuộn */}
+      <div className={styles.tableContainer} ref={tableContainerRef}>
         <table>
           <thead>
             <tr>
-              <th>Poster</th>
-              <th>Tên phim</th>
-              <th>Ngày chiếu</th>
-              <th>Đánh giá</th>
+              <th className={styles.colPoster}>Poster</th>
+              <th className={styles.colTitle}>Tên phim</th>
+              <th className={styles.colDate}>Ngày chiếu</th>
+              <th className={styles.colRating}>Đánh giá</th>
             </tr>
           </thead>
           <tbody>
-            {movies.map((movie, index) => {
-              const isLast = movies.length === index + 1;
-              return (
-                <tr key={`${movie.id}-${index}`} ref={isLast ? lastRowRef : null}>
-                  <td>
-                    <img 
-                      className={styles.posterImg}
-                      src={`https://image.tmdb.org/t/p/w92${movie.poster_path}`} 
-                      alt="" 
+            {movies.map((movie, index) => (
+              <tr key={`${movie.id}-${index}`}>
+                <td className={styles.colPoster}>
+                  <img 
+                    className={styles.posterImg} 
+                    src={`https://image.tmdb.org/t/p/w92${movie.poster_path}`} 
                     />
-                  </td>
-                  <td>
-                    <div className={styles.movieTitle}>{movie.title}</div>
-                  </td>
-                  <td>{movie.release_date}</td>
-                  <td><Star size={14} /> {movie.vote_average}</td>
-                </tr>
-              );
-            })}
+                </td>
+                <td className={styles.colTitle} title={movie.title}>
+                  {movie.title}
+                </td>
+                <td className={styles.colDate}>{movie.release_date}</td>
+                <td className={styles.colRating}><Star size={14} /> {movie.vote_average}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
 
-        {loading && (
-          <div className={styles.loadingArea}>
-            <Loader2 className="animate-spin" />
+        {/* PHẦN TỬ MỒI: Đặt ngay dưới table nhưng trong tableContainer */}
+        <div ref={lastRowRef} className={styles.sentinel}>
+          {loading && (
             <p>Đang tải phim...</p>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
